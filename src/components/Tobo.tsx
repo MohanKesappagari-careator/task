@@ -1,4 +1,4 @@
-import { Button, Form, Input, Modal, Pagination, Table } from "antd";
+import { Button, Form, Input, Modal, Table } from "antd";
 import Avatar from "antd/lib/avatar/avatar";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
