@@ -29,6 +29,8 @@ const Todo = () => {
     });
     setData([...data1, ...data2]);
   }, []);
+  console.log(data);
+
   useEffect(() => {
     localStorage.setItem("data", data);
   }, [data]);
