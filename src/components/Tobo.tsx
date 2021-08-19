@@ -6,17 +6,29 @@ import uuid from "uuid";
 
 const Todo = () => {
   const [data, setData] = useState<any>([]);
+  const [data1, setData1] = useState<any>([]);
+  const [data2, setData2] = useState<any>([]);
   const [lstorge, setLocalstorage] = useState([]);
   const [page, setPage] = useState(1);
   const [edit, setEdit] = useState<any>(0);
   const [form] = Form.useForm();
   const [editHandler, setEditHanler] = useState(false);
+  let pagination = {
+    current: 1,
+    pageSize: 10,
+  };
+
   useEffect(() => {
-    axios.get(`https://reqres.in/api/users?page=${page}`).then((response) => {
-      setData(response.data.data);
+    axios.get(`https://reqres.in/api/users?page=1`).then((response) => {
+      setData1(response.data.data);
       console.log(response.data);
     });
-  }, [page]);
+    axios.get(`https://reqres.in/api/users?page=2`).then((response) => {
+      setData2(response.data.data);
+      console.log(response.data);
+    });
+    setData([...data1, ...data2]);
+  }, []);
   useEffect(() => {
     localStorage.setItem("data", data);
   }, [data]);
@@ -32,7 +44,7 @@ const Todo = () => {
       title: "FirstName",
       dataIndex: "first_name",
       key: "id",
-      sorter: (a: any, b: any) => a.name.localeCompare(b.name),
+      sorter: (a: any, b: any) => a.first_name.localeCompare(b.first_name),
     },
     {
       title: "LastName",
@@ -45,17 +57,20 @@ const Todo = () => {
       key: "id",
     },
     {
-      title: "Action",
+      title: "Avatar",
       dataIndex: "",
       key: "id",
-      render: (id: any, record: any) => <Avatar src={record.avatar} />,
+      render: (id: any, record: any) => (
+        <Avatar size={"large"} src={record.avatar} />
+      ),
     },
     {
-      title: "Action",
+      title: "Edit Action",
       dataIndex: "",
       key: "id",
       render: (id: any, record: any, index: any) => (
         <Button
+          type="primary"
           onClick={() => {
             showModal();
             setEditHanler(true);
@@ -73,11 +88,13 @@ const Todo = () => {
       ),
     },
     {
-      title: "Action",
+      title: "Delete Action",
       dataIndex: "",
       key: "id",
       render: (id: any, record: any, index: any) => (
         <Button
+          danger
+          type="primary"
           onClick={() => {
             console.log("id", record.id, "i", index);
             setData(data.filter((i: any) => i.id !== record.id));
@@ -148,6 +165,8 @@ const Todo = () => {
   return (
     <>
       <Button
+        type="primary"
+        style={{ margin: "1rem" }}
         onClick={() => {
           showModal();
           form.setFieldsValue({
@@ -163,11 +182,16 @@ const Todo = () => {
       <Table
         dataSource={data}
         columns={columns}
-        pagination={false}
+        pagination={{
+          pageSize: 6,
+          onChange(current) {
+            setPage(current);
+          },
+        }}
         scroll={{ x: 1000 }}
         rowKey="id"
       />
-      <Pagination onChange={onChange} total={50} />
+      {/* <Pagination onChange={onChange} total={50} /> */}
       <Modal
         title="Basic Modal"
         visible={isModalVisible}
